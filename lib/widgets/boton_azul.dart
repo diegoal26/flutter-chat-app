@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class BotonAzul extends StatelessWidget{
 
   final String texto;
-  final Function onPressed;
+  final Function? onPressed;
 
   const BotonAzul({Key? key, 
-  required this.texto, required this.onPressed}) : super(key: key);
+  required this.texto, this.onPressed}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return RaisedButton(elevation: 2,
@@ -18,7 +18,9 @@ class BotonAzul extends StatelessWidget{
             height: 55,
             child: Center(child: Text(texto, style: TextStyle(color: Colors.white, fontSize: 17),),),
           ),
-          onPressed: (){
-            onPressed();});
+          onPressed: this.onPressed != null?(){
+            onPressed!();
+          }:null
+            );
   }
 }

@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat/services/auth_service.dart';
 import 'package:flutter_chat/widgets/boton_azul.dart';
 import 'package:flutter_chat/widgets/custom_input.dart';
 import 'package:flutter_chat/widgets/labels.dart';
 import 'package:flutter_chat/widgets/logo.dart';
+import 'package:provider/provider.dart';
+
+import '../helpers/mostrar_alerta.dart';
+import '../services/socket_service.dart';
 
 class RegisterPage extends StatelessWidget {
 
@@ -43,6 +48,10 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
+    final socketService = Provider.of<SocketService>(context);
+
     return Container(
       margin: EdgeInsets.only(top: 40),
       padding: EdgeInsets.symmetric(horizontal: 50),
@@ -56,8 +65,15 @@ class __FormState extends State<_Form> {
         CustomInput(icon: Icons.password_outlined, placeholder: 'Password',
         textController: passCtrl, isPassword: true,),
 
-        BotonAzul(texto: 'Ingrese', onPressed: (){
-          print(emailCtrl.text);
+        BotonAzul(texto: 'Crear Cuenta', onPressed: authService.autenticando?null : ()async{
+          final resul = await authService.register(nameCtrl.text, emailCtrl.text, passCtrl.text);
+          if(resul == true){
+            socketService.connect();
+            Navigator.pushReplacementNamed(context, 'usuarios');
+          }else{
+            mostrarAlerta(context, 'Correo ya registrado', resul);
+          }
+          //print(emailCtrl.text);
         },)
       ],),
     );
